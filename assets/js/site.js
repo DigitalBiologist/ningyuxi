@@ -352,3 +352,35 @@
   });
   lb.addEventListener('pointercancel', function () { sid = null; });
 })();
+
+
+/* 作品列表：瀑布流（照参考站）。按顺序把每件作品放进当前最矮的一栏（高度差 1px 以内取靠左的一栏），
+   栏数和间距读 CSS 变量 --cols、--gx、--gy；窗口变化、字体载入、图片载入后重排。没有 JS 时页面是普通网格。 */
+(function () {
+  var grids = document.querySelectorAll('[data-masonry]');
+  if (!grids.length) return;
+  function layout(g) {
+    var cs = getComputedStyle(g);
+    var cols = parseInt(cs.getPropertyValue('--cols'), 10) || 3;
+    var gx = parseFloat(cs.getPropertyValue('--gx')) || 0;
+    var gy = parseFloat(cs.getPropertyValue('--gy')) || 0;
+    var cw = (g.clientWidth - gx * (cols - 1)) / cols;
+    g.style.setProperty('--cw', cw + 'px');
+    g.classList.add('is-masonry');
+    var hs = [];
+    for (var i = 0; i < cols; i++) hs.push(0);
+    Array.prototype.forEach.call(g.children, function (el) {
+      var c = 0;
+      for (var k = 1; k < cols; k++) if (hs[k] < hs[c] - 1) c = k;
+      el.style.transform = 'translate(' + (c * (cw + gx)) + 'px,' + hs[c] + 'px)';
+      hs[c] += el.offsetHeight + gy;
+    });
+    g.style.height = Math.max(0, Math.max.apply(null, hs) - gy) + 'px';
+  }
+  function all() { Array.prototype.forEach.call(grids, layout); }
+  all();
+  var t;
+  window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(all, 100); });
+  window.addEventListener('load', all);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(all);
+})();

@@ -141,17 +141,19 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .works-grid .list-head { border-bottom: 0; }
 .page-sub { margin: 12px 0 0; font-size: 13px; letter-spacing: .06em; color: var(--mute); }
 
-/* ---------- 作品列表：网格（照参考站）。1100px 以上三栏，800–1099px 两栏，手机两栏 ---------- */
-.wgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 63px; row-gap: 96px; }
+/* ---------- 作品列表：瀑布流（照参考站）。1100px 以上三栏，800–1099px 两栏，手机两栏。
+   site.js 按顺序把每件放进最矮的一栏（加 .is-masonry）；没有 JS 时是普通网格 ---------- */
+.wgrid {
+  --cols: 3; --gx: 63px; --gy: 72px;
+  display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  column-gap: var(--gx); row-gap: var(--gy); align-items: start;
+}
+.wgrid.is-masonry { display: block; position: relative; }
+.wgrid.is-masonry > .wcell { position: absolute; top: 0; left: 0; width: var(--cw); }
 .wcell { margin: 0; scroll-margin-top: 24px; }
-.wimg { aspect-ratio: 1 / var(--r3); display: flex; align-items: flex-end; justify-content: flex-start; }  /* 同一行图框等高，图落在底线上 */
-.wimg .ph { width: var(--iw); }
 .wcell .entry-title { font-size: clamp(16px, 1.3vw, 20px); margin: 14px 0 4px; }
 .wcell-meta { margin: 0; font-size: 12px; line-height: 1.7; letter-spacing: .03em; color: var(--mute); }
-@media (min-width: 800px) and (max-width: 1099px) {
-  .wgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .wimg { aspect-ratio: 1 / var(--r2); }
-}
+@media (max-width: 1099px) { .wgrid { --cols: 2; } }
 
 /* ---------- 出版：每件一行，图和文字都落在行底的细线上（原作品列表的行） ---------- */
 .entry {
@@ -447,8 +449,7 @@ html.lb-lock, html.lb-lock body { overflow: hidden; }
   .hitem.m-right { margin-left: auto; }
   .home-more { margin-top: 64px; }
   /* 作品列表：两栏 */
-  .wgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 16px; row-gap: 40px; }
-  .wimg { aspect-ratio: 1 / var(--r2); }
+  .wgrid { --gx: 16px; --gy: 40px; }
   .wcell .entry-title { font-size: 15px; margin-top: 10px; }
   .wcell-meta { font-size: 11.5px; }
   /* 作品页：作品图每行一张（全宽），现场图、细节图和图多的组每行两张，两张等高；间距 12px */
