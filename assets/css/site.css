@@ -111,18 +111,17 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .cap .t { color: var(--ink); }
 .cap .y { color: var(--mute); font-size: 12px; font-variant-numeric: tabular-nums lining-nums; }
 
-/* ---------- 首页：12 栏栅格，每行两张（一大一小），上边或下边对齐；图注一律在图下 ---------- */
+/* ---------- 首页（排版第三版）：错列。内容宽分 24 份，每张图按 x、y、w 定位（单位都是 1/24 内容宽），
+   整体随窗口等比缩放；图注一律在图下。数值在 site/data/home.json ---------- */
 .home { width: var(--page); margin: calc(var(--u) * 1.0) auto 0; }
-.hrow {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  column-gap: 24px;
+.hcanvas { position: relative; aspect-ratio: 24 / var(--H); margin-bottom: 64px; }
+.hitem {
+  position: absolute; margin: 0;
+  left: calc(var(--x) / 24 * 100%);
+  top: calc(var(--y) / var(--H) * 100%);
+  width: calc(var(--w) / 24 * 100%);
 }
-.hrow + .hrow { margin-top: 160px; }       /* 行距：上一行图注底到下一行图顶 */
-.hrow.al-top { align-items: start; }
-.hrow.al-bottom { align-items: end; }
-.hpiece { grid-column: var(--c) / span var(--s); grid-row: 1; margin: 0; }
-.hpiece .cap { margin-top: 12px; }
+.hitem .cap { margin-top: 12px; }
 .home-more { margin: 120px 0 0; font-size: 13px; letter-spacing: .06em; }
 .home-more a { border-bottom: 1px solid var(--rule); padding-bottom: 2px; }
 .home-more a:hover { border-bottom-color: var(--ink); }
@@ -442,11 +441,10 @@ html.lb-lock, html.lb-lock body { overflow: hidden; }
 
   /* 首页：单列。L 占满宽，M 78%，S 58%；S、M 左右交替贴边；图与图之间 56px */
   .home { margin-top: 9vw; }
-  .hrow { display: block; }
-  .hrow + .hrow { margin-top: 56px; }
-  .hpiece { width: var(--mw); }
-  .hpiece + .hpiece { margin-top: 56px; }
-  .hpiece.m-right { margin-left: auto; }
+  .hcanvas { aspect-ratio: auto; margin-bottom: 0; }
+  .hitem { position: static; width: var(--mw); }
+  .hitem + .hitem { margin-top: 56px; }
+  .hitem.m-right { margin-left: auto; }
   .home-more { margin-top: 64px; }
   /* 作品列表：两栏 */
   .wgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 16px; row-gap: 40px; }
